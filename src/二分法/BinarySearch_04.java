@@ -18,7 +18,7 @@ public class BinarySearch_04 {
     }
 
     /**
-     * 对数期
+     * 对数器
      *
      * @param maxLength
      * @param maxRange
