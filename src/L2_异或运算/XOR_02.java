@@ -1,4 +1,4 @@
-package 异或运算;
+package L2_异或运算;
 
 import java.util.Arrays;
 import java.util.HashMap;

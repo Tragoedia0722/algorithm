@@ -1,4 +1,4 @@
-package 二分法;
+package L1_二分查找;
 
 import java.util.Arrays;
 

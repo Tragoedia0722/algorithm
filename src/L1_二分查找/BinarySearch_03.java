@@ -1,11 +1,11 @@
-package 二分法;
+package L1_二分查找;
 
 import java.util.Arrays;
 
 /**
- * 在一个有序数组中，找>=某个数最左侧的位置
+ * 在一个有序数组中，找<=某个数最右侧的位置
  */
-public class BinarySearch_02 {
+public class BinarySearch_03 {
     public static void main(String[] args) {
         int maxLength = 100;
         int maxRange = 100;
@@ -61,12 +61,13 @@ public class BinarySearch_02 {
      * @return
      */
     public static int methodA(int[] arr, int x) {
+        int index = -1;
         for (int i = 0; i < arr.length; i++) {
-            if (arr[i] >= x) {
-                return i;
+            if (arr[i] <= x) {
+                index = i;
             }
         }
-        return -1;
+        return index;
     }
 
     /**
@@ -79,8 +80,8 @@ public class BinarySearch_02 {
     public static int methodB(int[] arr, int x) {
         int left = 0;
         int right = arr.length - 1;
-        int mid = 0;
         int index = -1;
+        int mid = 0;
 
         if (arr == null || arr.length == 0) {
             return -1;
@@ -88,11 +89,11 @@ public class BinarySearch_02 {
 
         while (left <= right) {
             mid = left + ((right - left) >> 1);
-            if (arr[mid] >= x) {
+            if (arr[mid] <= x) {
                 index = mid;
-                right = mid - 1;
-            } else {
                 left = mid + 1;
+            } else {
+                right = mid - 1;
             }
         }
         return index;
