@@ -1,7 +1,7 @@
 package L2_异或运算;
 
 /**
- * 如何不用额外变量交换两个数
+ * 不使用额外变量交换两个数
  */
 public class XOR_01 {
     public static void main(String[] args) {

@@ -17,11 +17,39 @@ public class XOR_02 {
     }
 
     /**
+     * 暴力法
+     * 遍历数组 arr，将数组内的数值放入哈希表 map 中
+     * 遍历 map 中的 value 值，若值为奇数，则该 key 的数值出现了奇数次
+     */
+    public static int methodA(int[] arr) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i : arr) {
+            map.put(i, map.getOrDefault(i, 0) + 1);
+        }
+        Set<Map.Entry<Integer, Integer>> entries = map.entrySet();
+        for (Map.Entry<Integer, Integer> entry : entries) {
+            if (entry.getValue() % 2 != 0) {
+                return entry.getKey();
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * 亦或法
+     * 遍历数组，依次将数值异或，遍历结束后所留的值为奇数次值
+     * （偶数次异或结果为0，0与任意数字异或结果为任意数字）
+     */
+    public static int methodB(int[] arr) {
+        int a = arr[0];
+        for (int i = 1; i < arr.length; i++) {
+            a ^= arr[i];
+        }
+        return a;
+    }
+
+    /**
      * 对数器
-     *
-     * @param maxLength
-     * @param maxRange
-     * @param times
      */
     public static void compare(int maxLength, int maxRange, int times) {
         int[] arr = generateRandomArray(maxLength, maxRange);
@@ -39,10 +67,6 @@ public class XOR_02 {
 
     /**
      * 构造数组
-     *
-     * @param maxLength
-     * @param maxRange
-     * @return
      */
     public static int[] generateRandomArray(int maxLength, int maxRange) {
         int tempLength = (int) (Math.random() * (maxLength + 1));
@@ -64,10 +88,10 @@ public class XOR_02 {
         while (remain > 0) {
             temp = (int) (Math.random() * (10)); // [0,10)
             int tempEven = temp % 2 == 1 ? temp - 1 : temp; // 0,2,4,6,8
-            int even = remain > tempEven ? tempEven : remain;
+            int even = Math.min(remain, tempEven);
             remain = remain - even;
 
-            int evenNum = 0;
+            int evenNum;
             do {
                 evenNum = (int) (Math.random() * (maxRange + 1)) - (int) (Math.random() * (maxRange + 1));
             } while (evenNum == oddNum);
@@ -78,39 +102,5 @@ public class XOR_02 {
             }
         }
         return arr;
-    }
-
-    /**
-     * 哈希表
-     *
-     * @param arr
-     * @return
-     */
-    public static int methodA(int[] arr) {
-        Map<Integer, Integer> map = new HashMap<>();
-        for (int i : arr) {
-            map.put(i, map.getOrDefault(i, 0) + 1);
-        }
-        Set<Map.Entry<Integer, Integer>> entries = map.entrySet();
-        for (Map.Entry entry : entries) {
-            if (((int) entry.getValue()) % 2 != 0) {
-                return ((int) entry.getKey());
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * 亦或
-     *
-     * @param arr
-     * @return
-     */
-    public static int methodB(int[] arr) {
-        int a = arr[0];
-        for (int i = 1; i < arr.length; i++) {
-            a ^= arr[i];
-        }
-        return a;
     }
 }
