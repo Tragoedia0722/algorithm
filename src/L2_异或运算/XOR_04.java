@@ -10,7 +10,7 @@ public class XOR_04 {
         int maxLength = 1000;
         int maxRange = 1000;
         int times = 10000;
-        compare(maxLength,maxRange,times);
+        compare(maxLength, maxRange, times);
     }
 
     /**
@@ -89,7 +89,7 @@ public class XOR_04 {
      * 生成具有两个奇数次，其余偶数次的的数组
      */
     public static int[] generateRandomArray(int maxLength, int maxRange) {
-        int length = (int) (Math.random() * (maxLength + 1)) + 100;
+        int length = (int) (Math.random() * (maxLength + 1)) + 18;
         while (length % 2 != 0) {
             length += 1;
         }
