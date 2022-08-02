@@ -47,6 +47,7 @@ public class XOR_05 {
     public static int methodB(int[] arr, int k, int m) {
         int ans = 0;
         int[] binary = new int[32];
+
         for (int num : arr) {
             for (int i = 0; i < binary.length; i++) {
                 if (((num >> i) & 1) != 0) {
