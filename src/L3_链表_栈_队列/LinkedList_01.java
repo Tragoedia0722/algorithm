@@ -1,5 +1,7 @@
-package L3_基础数据结构;
+package L3_链表_栈_队列;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -16,16 +18,16 @@ public class LinkedList_01 {
     /**
      * 结点结构
      */
-    private static class Node<T> {
+    private static class LNode<T> {
         private T value;
-        private Node<T> next;
+        private LNode<T> next;
 
         private int length;
 
-        public Node() {
+        public LNode() {
         }
 
-        public Node(T data) {
+        public LNode(T data) {
             value = data;
         }
 
@@ -37,11 +39,11 @@ public class LinkedList_01 {
             this.value = value;
         }
 
-        public Node<T> getNext() {
+        public LNode<T> getNext() {
             return next;
         }
 
-        public void setNext(Node<T> next) {
+        public void setNext(LNode<T> next) {
             this.next = next;
         }
 
@@ -52,60 +54,20 @@ public class LinkedList_01 {
         public void setLength(int length) {
             this.length = length;
         }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Node<?> node = (Node<?>) o;
-            return length == node.length && value.equals(node.value) && next.equals(node.next);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(value, next, length);
-        }
-
-        @Override
-        public String toString() {
-            return "Node{" +
-                    "value=" + value +
-                    ", next=" + next +
-                    '}';
-        }
-    }
-
-    /**
-     * 结点添加
-     */
-    public static <T> void add(Node<T> head, T data) {
-        head.setLength(head.getLength() + 1);
-        // 头结点为空
-        if (head.getValue() == null) {
-            head.setValue(data);
-            return;
-        }
-
-        // 尾部追加
-        Node<T> node = head;
-        while (node.getNext() != null) {
-            node = node.getNext();
-        }
-        node.setNext(new Node<>(data));
     }
 
     /**
      * 暴力法
-     * 遍历单链表 node，将值依次存入辅助数组 arr 中
+     * 遍历单链表 LNode，将值依次存入辅助数组 arr 中
      * 反向遍历辅助数组 arr，将数值依次添加到新单链表 ans 中
      * 返回新单链表 ans
      */
-    public static <T> Node<Integer> methodA(Node<T> head) {
+    public static <T> LNode<Integer> methodA(LNode<T> head) {
         if (head.getValue() == null) {
-            return new Node<>();
+            return new LNode<>();
         }
 
-        Node<Integer> ans = new Node<>();
+        LNode<Integer> ans = new LNode<>();
         int[] arr = new int[head.getLength()];
 
         int i = 0;
@@ -124,7 +86,7 @@ public class LinkedList_01 {
     }
 
     /**
-     * 三指针法
+     * 指针法
      * 将指针 p 指向头结点，指针 pre 指向空
      * 遍历结点，若当前指针 p 不为空
      * 将指针 q 指向 p 指针的下一位，记录为下一位的结点位置
@@ -134,15 +96,15 @@ public class LinkedList_01 {
      * 当 p 指针为空时，遍历完成，此时 p q 结点均指向原尾结点 null，pre 指向原最后一个数值结点
      * 返回 pre 为反转链表的头结点
      */
-    public static <T> Node<T> methodB(Node<T> head) {
+    public static <T> LNode<T> methodB(LNode<T> head) {
         // 头结点为空
         if (head.getValue() == null) {
-            return new Node<>();
+            return new LNode<>();
         }
 
-        Node<T> pre = null;
-        Node<T> p = head;
-        Node<T> q;
+        LNode<T> pre = null;
+        LNode<T> p = head;
+        LNode<T> q;
 
         // 头结点非空
         while (p != null) {
@@ -156,19 +118,43 @@ public class LinkedList_01 {
     }
 
     /**
+     * 结点添加
+     */
+    public static <T> void add(LNode<T> head, T data) {
+        head.setLength(head.getLength() + 1);
+        // 头结点为空
+        if (head.getValue() == null) {
+            head.setValue(data);
+            return;
+        }
+
+        // 尾部追加
+        LNode<T> LNode = head;
+        while (LNode.getNext() != null) {
+            LNode = LNode.getNext();
+        }
+        LNode.setNext(new LNode<>(data));
+    }
+
+    /**
      * 对数器
      */
     public static void compare(int maxLength, int maxRange, int times) {
         for (int i = 0; i < times; i++) {
-            Node<Integer> head = generateRandomLinkedList(maxLength, maxRange);
-            Node<Integer> methodA = methodA(head);
-            Node<Integer> methodB = methodB(head);
-            if (!methodA.toString().equals(methodB.toString())) {
-                System.out.println("head = " + head);
-                System.out.println("methodA(head) = " + methodA);
-                System.out.println("methodB(head) = " + methodB);
-                break;
+            LNode<Integer> head = generateRandomLinkedList(maxLength, maxRange);
+            LNode<Integer> methodA = methodA(head);
+            List<Integer> listA = toList(methodA);
+            LNode<Integer> methodB = methodB(head);
+            List<Integer> listB = toList(methodB);
+            for (int j = 0; j < listA.size(); j++) {
+                if (!listA.get(j).equals(listB.get(j))) {
+                    System.out.println("head = " + head);
+                    System.out.println("methodA(head) = " + methodA);
+                    System.out.println("methodB(head) = " + methodB);
+                    break;
+                }
             }
+
         }
         System.out.println("通过");
     }
@@ -176,15 +162,28 @@ public class LinkedList_01 {
     /**
      * 随机生成单链表
      */
-    public static Node<Integer> generateRandomLinkedList(int maxLength, int maxRange) {
+    public static LNode<Integer> generateRandomLinkedList(int maxLength, int maxRange) {
         int length = (int) (Math.random() * (maxLength + 1));
 
-        Node<Integer> node = new Node<>();
+        LNode<Integer> LNode = new LNode<>();
         for (int i = 0; i < length; i++) {
             int value = (int) (Math.random() * (maxRange + 1)) - (int) (Math.random() * (maxRange + 1));
-            add(node, value);
+            add(LNode, value);
         }
-        return node;
+        return LNode;
+    }
+
+    /**
+     * 链表转列表
+     */
+    public static List<Integer> toList(LNode<Integer> head) {
+        List<Integer> list = new ArrayList<>();
+        while (head.getNext() != null) {
+            list.add(head.getValue());
+            head = head.getNext();
+        }
+        list.add(head.getValue());
+        return list;
     }
 
 }
