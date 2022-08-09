@@ -4,23 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 双链表反转
+ * 双链表删除特定值
  */
-public class LinkedList_02 {
+public class LinkedList_03 {
     public static void main(String[] args) {
         int maxLength = 1000;
         int maxRange = 100;
-        int times = 100;
+        int times = 1000;
         compare(maxLength, maxRange, times);
     }
 
     /**
      * 暴力法
      * 遍历双链表 head，将值依次存入辅助数组 arr 中
-     * 反向遍历辅助数组 arr，将数值依次添加到新双链表 ans 中
+     * 遍历 arr，将特定值 x 以外的数值添加到新单链表 ans 中
      * 返回新单链表 ans
      */
-    public static DoublyLNode<Integer> methodA(DoublyLNode<Integer> head) {
+    public static DoublyLNode<Integer> methodA(DoublyLNode<Integer> head, int x) {
         DoublyLNode<Integer> ans = new DoublyLNode<>();
         int[] arr = new int[head.getLength()];
         int i = 0;
@@ -29,40 +29,52 @@ public class LinkedList_02 {
             head = head.getNext();
             i++;
         }
-        arr[i] = head.getValue();
-        for (int j = arr.length - 1; j >= 0; j--) {
-            add(ans, arr[j]);
+        if (head.getValue() != null) {
+            arr[i] = head.getValue();
+        }
+        for (int j : arr) {
+            if (j != x) {
+                add(ans, j);
+            }
         }
         return ans;
     }
 
     /**
      * 指针法
-     * 将指针 p 指向头结点，pre指向空
-     * 遍历结点，若当前指针不为空
-     * 将指针 q 指向 p 的 next 结点，记录为下一位的结点位置
-     * 将 p 的 next 指向 pre，达到链表反转的效果
-     * 将 pre 的 prev 指向 p，使前后结点链接正确
-     * 将 pre 指向 p，记录 pre 为上一位的结点位置
-     * 将 p 指向 q，此时一次反转操作完成
-     * 当 p 指向空时遍历完成，此时 p q 均指向原尾结点 null，pre 指向原来最后一个数值结点
-     * 返回 pre 为反转结点的表头结点
+     * 将当前指针 p 和下一位指针 q 分别指向表头结点 head
+     * 遍历双向链表
+     * 若头结点 head 为待删除的数值 x，则将 head 结点后移
+     * 判断当前指针 p 指向的结点的值是否为数值 x，若为数值 x 则将 q 指针结点的下一位指向 p 指针结点的下一位，实现跳过 p 结点
+     * 若数值不相等，则将 q 指向 p，此时两指针指向同一结点
+     * 每次数值判断后将 p 指针向后移
+     * 返回头结点 head
      */
-    public static DoublyLNode<Integer> methodB(DoublyLNode<Integer> head) {
-        DoublyLNode<Integer> pre = null;
+    public static DoublyLNode<Integer> methodB(DoublyLNode<Integer> head, int x) {
         DoublyLNode<Integer> p = head;
-        DoublyLNode<Integer> q;
+        DoublyLNode<Integer> q = p;
 
         while (p != null) {
-            q = p.getNext();
-            p.setNext(pre);
-            if (pre != null) {
-                pre.setPrev(p);
+            // 删除为头结点
+            if (head != null && head.getValue() != null && head.getValue().equals(x)) {
+                head = head.getNext();
+                if (head != null) { // 非尾结点
+                    head.setPrev(null);
+                }
             }
-            pre = p;
-            p = q;
+
+            // 删除非头结点
+            if (p.getValue() != null && p.getValue().equals(x)) {
+                if (p.getNext() != null) { // 非尾结点
+                    p.getNext().setPrev(q);
+                }
+                q.setNext(p.getNext());
+            } else {
+                q = p;
+            }
+            p = p.getNext();
         }
-        return pre;
+        return head;
     }
 
     /**
@@ -143,11 +155,17 @@ public class LinkedList_02 {
     public static void compare(int maxLength, int maxRange, int times) {
         for (int i = 0; i < times; i++) {
             DoublyLNode<Integer> doublyLNode = generateRandomDoublyLinkedList(maxLength, maxRange);
-            DoublyLNode<Integer> methodA = methodA(doublyLNode);
-            DoublyLNode<Integer> methodB = methodB(doublyLNode);
+            int xRange = (int) (Math.random() * (doublyLNode.getLength()));
+            List<Integer> list = toList(doublyLNode);
+            int x = 0;
+            if (list.size() > 0 && list.get(xRange) != null) {
+                x = list.get(xRange);
+            }
+            DoublyLNode<Integer> methodA = methodA(doublyLNode, x);
+            DoublyLNode<Integer> methodB = methodB(doublyLNode, x);
             List<Integer> listA = toList(methodA);
             List<Integer> listB = toList(methodB);
-            for (int j = 0; j < listA.size(); j++) {
+            for (int j = 0; j < listA.size() - 1; j++) {
                 if (!listA.get(j).equals(listB.get(j))) {
                     System.out.println("doublyLNode = " + doublyLNode);
                     System.out.println("methodA = " + methodA);
@@ -174,19 +192,18 @@ public class LinkedList_02 {
         return doublyLNode;
     }
 
-
     /**
      * 链表转列表
      */
     public static List<Integer> toList(DoublyLNode<Integer> head) {
         List<Integer> list = new ArrayList<>();
-        while (head.getNext() != null) {
+        if (head != null) {
+            while (head.getNext() != null) {
+                list.add(head.getValue());
+                head = head.getNext();
+            }
             list.add(head.getValue());
-            head = head.getNext();
         }
-        list.add(head.getValue());
         return list;
     }
-
-
 }
